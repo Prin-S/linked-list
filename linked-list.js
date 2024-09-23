@@ -18,6 +18,8 @@ class LinkedList {
         }
 
         this.size++;
+
+        return `Added "${value}" to the end of the linked list.`;
     }
 
     prepend(value) {
@@ -25,6 +27,8 @@ class LinkedList {
         this.head = new Node(value); // Create and prepend the new node as the new head.
         this.head.nextNode = oldHead; // Move the old head to the next node.
         this.size++;
+
+        return `Added "${value}" to the start of the linked list.`;
     }
 
     getSize() {
@@ -47,7 +51,7 @@ class LinkedList {
 
     at(index) {
         if (index >= this.size) {
-            return `Node not found at index = ${index}`;
+            return `No node is found at index ${index}.`;
         } else if (index == this.size - 1) { // Return the last node.
             return this.getTail();
         } else { // Return other nodes.
@@ -62,22 +66,26 @@ class LinkedList {
     }
 
     pop() {
-        const lastNode = this.getTail().value; // Get value of the last node before it is removed.
-        let beforeLastNode = this.head;
-
         try {
-            while (beforeLastNode.nextNode.nextNode != null) { // If nextNode of nextNode is not null,
-                beforeLastNode = beforeLastNode.nextNode; // Move to nextNode.
+            const lastNode = this.getTail().value; // Get value of the last node before it is removed.
+            let beforeLastNode = this.head;
+
+            if (this.getSize() == 1) { // Skip the while loop when there is only one node left because there is no beforeLastNode.nextNode.nextNode (only beforeLastNode.nextNode).
+                this.head = null; // Remove the last node from the linked list.
+            } else {
+                while (beforeLastNode.nextNode.nextNode != null) { // If nextNode of nextNode is not null,
+                    beforeLastNode = beforeLastNode.nextNode; // Move to nextNode.
+                }
+    
+                beforeLastNode.nextNode = null; // Once out of the loop, make nextNode of beforeLastNode null to cut the link to the last node.
             }
 
-            beforeLastNode.nextNode = null; // Once out of the loop, make nextNode of beforeLastNode null to cut the link to the last node.
+            this.size--;
+            
+            return `Popped "${lastNode}" from the linked list.`;
         } catch (err) { // When the final node is removed (nothing left in the linked list),
-            this.head = null;
+            return 'The linked list is empty.';
         }
-        
-        this.size--;
-
-        return `Popped "${lastNode}" from the list.`;
     }
 
     contains(value) {
@@ -135,6 +143,69 @@ class LinkedList {
 
         return string + 'null'; // Append null at the end.
     }
+
+    insertAt(value, index) {
+        try {
+            if (index == 0) { // Insert at the start.
+                this.prepend(value);
+            } else if (index == this.size) { // Insert at the end.
+                this.append(value);
+            } else {
+                let counter = 0;
+                let currNode = this.head;
+    
+                while (counter < index - 1) { // index - 1 is used because we want value to be inserted at index, rather than after it.
+                    counter++;
+                    currNode = currNode.nextNode; // Move to nextNode.
+                }
+
+                // Once index - 1 is reached, create and append the new node to nextNode of currNode.
+                // The new node points to currNode.nextNode (before it is reassigned) which contains all the remaining nodes in the linked list.
+                currNode.nextNode = new Node(value, currNode.nextNode);
+            }
+
+            this.size++;
+
+            return `"${value}" inserted at index ${index}.`;
+        } catch (err) {
+            return 'Index is not found.';
+        }
+    }
+
+    removeAt(index) {
+        try {
+            let removedNode;
+
+            if (index == 0) { // Remove the first node.
+                removedNode = this.getHead().value;
+                this.head = new Node(this.head.nextNode.value, this.head.nextNode.nextNode); // Replace value and nextNode of this.head with nextNode.value and nextNode.nextNode, respectively.
+            } else if (index == this.size) { // Remove the last node.
+                removedNode = this.getTail().value;
+                this.pop();
+            } else {
+                let counter = 0;
+                let currNode = this.head;
+
+                while (counter < index - 1) { // index - 1 is used because we want the node to be removed at index, rather than after it.
+                    counter++;
+                    currNode = currNode.nextNode; // Move to nextNode.
+                }
+
+                removedNode = currNode.nextNode.value;
+
+                // Once index - 1 is reached, create and append the new node to nextNode of currNode.
+                // The new node skips currNode.nextNode.value (currNode.nextNode.nextNode.value is used instead)
+                // and points to currNode.nextNode.nextNode.nextNode which contains all the remaining nodes in the linked list.            
+                currNode.nextNode = new Node(currNode.nextNode.nextNode.value, currNode.nextNode.nextNode.nextNode);
+            }
+            
+            this.size--;
+
+            return `Removed "${removedNode}" from the linked list.`;
+        } catch (err) {
+            return 'Index is not found.';
+        }
+    }
 }
 
 class Node {
@@ -146,10 +217,10 @@ class Node {
 
 const list = new LinkedList();
 
-list.append("dog");
-list.append("cat");
-list.append("parrot");
-list.prepend("hamster");
+console.log(list.append("dog"));
+console.log(list.append("cat"));
+console.log(list.append("parrot"));
+console.log(list.prepend("hamster"));
 
 console.log(list.getSize());
 console.log(list.getHead());
@@ -157,17 +228,34 @@ console.log(list.getTail());
 console.log(list.at(4));
 console.log(list.pop());
 console.log(list.getSize());
+console.log(list.toString());
 console.log(list.getTail());
 console.log(list.contains("parrot"));
 console.log(list.find("cat"));
 console.log(list.toString());
-console.log(list.pop());
-console.log(list.pop());
-console.log(list.toString());
-console.log(list.pop());
+
+console.log(list.append("snake"));
 console.log(list.getSize());
 console.log(list.toString());
 
-list.append("snake");
+console.log(list.insertAt("turtle", 3));
+console.log(list.getSize());
+console.log(list.getHead());
+console.log(list.getTail());
+console.log(list.toString());
+
+console.log(list.removeAt(4));
+console.log(list.removeAt(0));
+console.log(list.toString());
+console.log(list.removeAt(2));
+console.log(list.toString());
+
+console.log(list.pop());
+console.log(list.toString());
+console.log(list.pop());
+console.log(list.toString());
+console.log(list.pop());
+console.log(list.toString());
+console.log(list.pop());
 console.log(list.getSize());
 console.log(list.toString());
