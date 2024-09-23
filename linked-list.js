@@ -35,18 +35,30 @@ class LinkedList {
         return this.size;
     }
 
-    getHead() {    
-        return new Node(this.head.value, this.head.nextNode.value); // This is so that only value is shown for nextNode.
+    getHead() {
+        try {
+            if (this.head.nextNode == null) { // When there is only one node in the linked list, nextNode is null.
+                return new Node(this.head.value, null);
+            }
+    
+            return new Node(this.head.value, this.head.nextNode.value); // This is so that only value is shown for nextNode.
+        } catch (err) { // When nothing is left in the linked list,
+            return 'The linked list is empty.';
+        }
     }
 
     getTail() {
-        let lastNode = this.head;
+        try {
+            let lastNode = this.head;
         
-        while (lastNode.nextNode != null) { // While nextNode of lastNode still points to another node,
-            lastNode = lastNode.nextNode; // Keep on assigning nextNode as lastNode.
-        }
+            while (lastNode.nextNode != null) { // While nextNode of lastNode still points to another node,
+                lastNode = lastNode.nextNode; // Keep on assigning nextNode as lastNode.
+            }
 
-        return lastNode;
+            return lastNode;
+        } catch (err) { // When nothing is left in the linked list,
+            return 'The linked list is empty.';
+        }
     }
 
     at(index) {
@@ -89,41 +101,49 @@ class LinkedList {
     }
 
     contains(value) {
-        let selectedNode = this.head;
-        
-        if (selectedNode.value == value) { // If the first node equals value,
-            return true;
-        }
-
-        while (selectedNode.nextNode != null) { // Loop the subsequent nodes.
-            selectedNode = selectedNode.nextNode;
-
-            if (selectedNode.value == value) { // If any of the subsequent nodes equals value,
+        try {
+            let selectedNode = this.head;
+            
+            if (selectedNode.value == value) { // If the first node equals value,
                 return true;
             }
-        }
 
-        return false; // If no match is found,
+            while (selectedNode.nextNode != null) { // Loop the subsequent nodes.
+                selectedNode = selectedNode.nextNode;
+
+                if (selectedNode.value == value) { // If any of the subsequent nodes equals value,
+                    return true;
+                }
+            }
+
+            return false; // If no match is found,
+        } catch (err) { // When nothing is left in the linked list,
+            return false;
+        }
     }
 
     find(value) {
-        let counter = 0;
-        let selectedNode = this.head;
-        
-        if (selectedNode.value == value) { // If the first node equals value,
-            return counter;
-        }
-
-        while (selectedNode.nextNode != null) { // Loop the subsequent nodes.
-            counter++;
-            selectedNode = selectedNode.nextNode;
-
-            if (selectedNode.value == value) { // If any of the subsequent nodes equals value,
+        try {
+            let counter = 0;
+            let selectedNode = this.head;
+            
+            if (selectedNode.value == value) { // If the first node equals value,
                 return counter;
             }
-        }
 
-        return null; // If no match is found,
+            while (selectedNode.nextNode != null) { // Loop the subsequent nodes.
+                counter++;
+                selectedNode = selectedNode.nextNode;
+
+                if (selectedNode.value == value) { // If any of the subsequent nodes equals value,
+                    return counter;
+                }
+            }
+
+            return null; // If no match is found,
+        } catch (err) { // When nothing is left in the linked list,
+            return null;
+        }
     }
 
     toString() {
@@ -251,11 +271,20 @@ console.log(list.removeAt(2));
 console.log(list.toString());
 
 console.log(list.pop());
+console.log(list.getHead());
+console.log(list.getTail());
 console.log(list.toString());
 console.log(list.pop());
+console.log(list.getHead());
+console.log(list.getTail());
 console.log(list.toString());
 console.log(list.pop());
 console.log(list.toString());
 console.log(list.pop());
 console.log(list.getSize());
 console.log(list.toString());
+console.log(list.getHead());
+console.log(list.getTail());
+console.log(list.at(4));
+console.log(list.contains("parrot"));
+console.log(list.find("cat"));
